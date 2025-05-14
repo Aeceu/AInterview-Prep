@@ -24,7 +24,7 @@ export const handleLoginController = async (
 ) => {
   const data = req.body;
   try {
-    const { accessToken, refreshToken, userExists } = await loginUser(data);
+    const { accessToken, refreshToken } = await loginUser(data);
 
     res.cookie("jwt", refreshToken, {
       httpOnly: true,
@@ -36,7 +36,6 @@ export const handleLoginController = async (
     res.status(200).json({
       message: "User authenticated!",
       accessToken: accessToken,
-      user: userExists,
     });
   } catch (error) {
     console.error("❌ Login error caught:", error);
@@ -54,6 +53,7 @@ export const handleRefreshController = async (
     const result = await refreshToken(req);
     res.status(200).json(result);
   } catch (error) {
+    console.error("❌ Login error caught:", error);
     next(error);
   }
 };

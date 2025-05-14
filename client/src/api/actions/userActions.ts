@@ -50,3 +50,20 @@ export const handleLogin = async (user: LoginParams) => {
     userStore.setAuthLoading(false)
   }
 }
+
+export const handleRefresh = async () => {
+  const store = useUserStore()
+  try {
+    store.setAuthLoading(true)
+    const res = await axios.get('/refresh', {
+      withCredentials: true,
+    })
+    console.log(res)
+    store.setUser(res.data.user)
+    store.setToken(res.data.accessToken)
+  } catch (err) {
+    console.log(err)
+  } finally {
+    store.setAuthLoading(false)
+  }
+}

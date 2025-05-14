@@ -86,7 +86,6 @@ export const loginUser = async (user: LoginUserParams) => {
     return {
       refreshToken,
       accessToken,
-      userExists,
     };
   } catch (error) {
     if (error instanceof AppError) {
@@ -118,12 +117,12 @@ export const refreshToken = async (req: Request) => {
       refreshToken,
       process.env.REFRESH_TOKEN_PRIVATE_KEY!,
       (err: any, decoded: any) => {
-        if (err || foundUser.id !== decoded) {
+        if (err || foundUser.id !== decoded.id) {
           return reject(new UnauthorizedError("You are NOT allowed!"));
         }
 
         const accessToken = jwt.sign(
-          String(foundUser.id),
+          { id: String(foundUser.id) },
           process.env.ACCESS_TOKEN_PRIVATE_KEY!,
           {
             expiresIn: "15m",
