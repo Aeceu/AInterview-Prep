@@ -26,8 +26,6 @@ export const handleLoginController = async (
   try {
     const { accessToken, refreshToken, userExists } = await loginUser(data);
 
-    console.log(accessToken, refreshToken, userExists);
-
     res.cookie("jwt", refreshToken, {
       httpOnly: true,
       sameSite: "none",
