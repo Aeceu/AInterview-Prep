@@ -1,7 +1,7 @@
 export type CreateUserParams = {
   name: string;
   email: string;
-  password: string;
+  profileImage?: string;
 };
 
 export type LoginUserParams = {

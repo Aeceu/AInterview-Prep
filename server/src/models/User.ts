@@ -5,8 +5,7 @@ type UserAttributes = {
   id: number;
   name: string;
   email: string;
-  password: string;
-  refreshToken?: string;
+  profileImage?: string;
   role: "admin" | "user";
   createdAt: Date;
   updatedAt: Date;
@@ -21,8 +20,7 @@ export class User extends Model<UserAttributes, UserCreationAttributes> {
   declare id: number;
   declare name: string;
   declare email: string;
-  declare password: string;
-  declare refreshToken?: string;
+  declare profileImage?: string;
   declare role: "admin" | "user";
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
@@ -44,13 +42,9 @@ User.init(
       allowNull: false,
       unique: true,
     },
-    password: {
+    profileImage: {
       type: DataTypes.STRING,
       allowNull: false,
-    },
-    refreshToken: {
-      type: DataTypes.STRING,
-      allowNull: true,
     },
     role: {
       type: DataTypes.ENUM("admin", "user"),

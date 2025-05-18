@@ -1,75 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { createUser, loginUser, refreshToken } from "../services/user.service";
-
-// create user
-export const handleRegisterController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  const data = req.body;
-  try {
-    const newUser = await createUser(data);
-    res.status(200).json(newUser);
-  } catch (error) {
-    next(error);
-  }
-};
-
-// login user
-export const handleLoginController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  const data = req.body;
-  try {
-    const { accessToken, refreshToken } = await loginUser(data);
-
-    res.cookie("jwt", refreshToken, {
-      httpOnly: true,
-      sameSite: "none",
-      secure: true,
-      maxAge: 24 * 60 * 60 * 1000,
-    });
-
-    res.status(200).json({
-      message: "User authenticated!",
-      accessToken: accessToken,
-    });
-  } catch (error) {
-    console.error("❌ Login error caught:", error);
-    next(error);
-  }
-};
-
-// refresh
-export const handleRefreshController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const result = await refreshToken(req);
-    res.status(200).json(result);
-  } catch (error) {
-    console.error("❌ Login error caught:", error);
-    next(error);
-  }
-};
-
-// update user
-
-// delete user
-
-// get user
-
-// get all users
-
-// TEST
 import { GoogleGenAI } from "@google/genai";
-
-const ai = new GoogleGenAI({ apiKey: process.env.AI_API_KEY });
 
 export const handleTestAI = async (
   req: Request,
@@ -78,9 +8,10 @@ export const handleTestAI = async (
 ) => {
   const data = req.body;
   try {
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     const response = await ai.models.generateContent({
       model: "gemini-2.0-flash",
-      contents: `Generate 5 questions with multiple choice based on the given topic. Return this in a JSON format.
+      contents: `Generate ${data.count} questions with multiple choice based on the given topic. Return this in a JSON format.
       Use this format as reference:
       [
         {
@@ -94,7 +25,8 @@ export const handleTestAI = async (
           "correct": "a"
         }
       ]
-      Topic: ${data.topic || "Sample Topic"}
+      Topic: ${data.topics || "Sample Topic"},
+      Difficulty: ${data.difficulty || "easy"}
       `,
     });
 
@@ -108,4 +40,28 @@ export const handleTestAI = async (
     console.error(error);
     next(error);
   }
+};
+
+export const LoginSuccess = async (req: Request, res: Response) => {
+  if (req.user) {
+    res.status(200).json({
+      error: false,
+      message: "Login successfully",
+      user: req.user,
+    });
+  } else {
+    res.status(403).json({ error: true, message: "Not Authorized" });
+  }
+};
+
+export const Logout = (req: Request, res: Response, next: NextFunction) => {
+  req.logout((err) => {
+    if (err) return next(err);
+
+    req.session.destroy((err) => {
+      if (err) return next(err);
+      res.clearCookie("connect.sid", { path: "/" });
+      res.status(200).json({ message: "Logged out successfully" });
+    });
+  });
 };
