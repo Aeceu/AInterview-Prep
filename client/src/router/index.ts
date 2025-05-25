@@ -15,7 +15,7 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach(async (to, _, next) => {
+router.beforeEach(async (to, from, next) => {
   const store = useUserStore()
   if (!store.getUser) {
     try {

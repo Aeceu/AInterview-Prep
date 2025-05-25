@@ -1,14 +1,15 @@
-import express from "express";
-import dotenv from "dotenv";
-import morgan from "morgan";
 import cookieParser from "cookie-parser";
-import { errorHandler } from "./middlewares/errorHandler";
 import cors from "cors";
-import passport from "passport";
+import dotenv from "dotenv";
+import express from "express";
 import session from "express-session";
+import morgan from "morgan";
+import passport from "passport";
+import { errorHandler } from "./middlewares/errorHandler";
 import passportStrategy from "./passport";
 
 // Routes
+import questionRoute from "./routes/question.routes";
 import userRoute from "./routes/user.routes";
 
 passportStrategy();
@@ -35,7 +36,8 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use("/api/auth", userRoute);
+app.use("/api/v1/auth", userRoute);
+app.use("/api/v1", questionRoute);
 
 app.use(errorHandler);
 

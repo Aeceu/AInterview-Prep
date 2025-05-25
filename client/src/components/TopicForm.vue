@@ -7,13 +7,13 @@
     </el-col>
     <el-col :span="16" style="margin-top: 2em; margin-bottom: 2em">
       <el-select
-        v-model="topics"
+        v-model="questionStore.tags"
         multiple
+        filterable
         collapse-tags
         collapse-tags-tooltip
         :max-collapse-tags="5"
         placeholder="Topics"
-        filterable
       >
         <el-option
           v-for="item in topicOptions"
@@ -24,9 +24,9 @@
       </el-select>
     </el-col>
     <el-col :span="4">
-      <el-select v-model="difficulty" placeholder="Difficulty" size="large">
+      <el-select v-model="questionStore.difficulty" placeholder="Difficulty" size="large">
         <el-option
-          v-for="item in options"
+          v-for="item in DifficultyOptions"
           :key="item.value"
           :label="item.label"
           :value="item.value"
@@ -34,7 +34,7 @@
       </el-select>
     </el-col>
     <el-col :span="3">
-      <el-select v-model="count" placeholder="Count" size="large">
+      <el-select v-model="questionStore.count" placeholder="Count" size="large">
         <el-option
           v-for="item in countOption"
           :key="item.value"
@@ -52,12 +52,19 @@
           width: 100px;
           color: rgba(255, 255, 255, 1);
           border: 2px solid #0ed06e;
-          background-color: rgba(14, 208, 110, 0.1); /* Light green background */
+          background-color: rgba(14, 208, 110, 0.1);
           font-weight: bold;
           font-size: 16px;
         "
         size="large"
-        @click="() => handleGetQuestions(topics, difficulty, count)"
+        @click="
+          () =>
+            handleGetQuestions(
+              questionStore.getTags,
+              questionStore.getDifficulty,
+              questionStore.getCount,
+            )
+        "
         >Start</el-button
       >
     </el-col>
@@ -65,29 +72,11 @@
 </template>
 
 <script setup lang="ts">
-import { handleGetQuestions } from '@/api/actions/userActions'
-import { countOption, topicOptions } from '@/models/constant'
+import { handleGetQuestions } from '@/api/actions/questionActions'
+import { countOption, DifficultyOptions, topicOptions } from '@/models/constant'
 import { useQuestionStore } from '@/stores/questionStore'
-import { ref } from 'vue'
 
 const questionStore = useQuestionStore()
-const topics = ref<string[]>([])
-const difficulty = ref<string>('')
-const count = ref<number>(5)
-const options = [
-  {
-    label: 'Easy',
-    value: 'easy',
-  },
-  {
-    label: 'Medium',
-    value: 'medium',
-  },
-  {
-    label: 'Hard',
-    value: 'hard',
-  },
-]
 </script>
 
 <style scoped>

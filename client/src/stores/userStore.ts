@@ -7,7 +7,7 @@ type State = {
   errorMessage: string
 }
 
-export const useUserStore = defineStore('useUserStore', {
+export const useUserStore = defineStore('userStore', {
   state: (): State => ({
     user: null,
     authLoading: false,

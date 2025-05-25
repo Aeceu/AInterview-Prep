@@ -1,15 +1,15 @@
 import { useUserStore } from '@/stores/userStore'
 import axios from '../axios'
-import { useQuestionStore } from '@/stores/questionStore'
 
 export const handleRefresh = async () => {
   const store = useUserStore()
   try {
     store.setAuthLoading(true)
-    const res = await axios.get('/login/success', {
+    const res = await axios.get('/auth/login/success', {
       withCredentials: true,
     })
     store.setUser(res.data.user)
+    console.log(res.data)
   } catch (err) {
     console.log(err)
   } finally {
@@ -17,33 +17,14 @@ export const handleRefresh = async () => {
   }
 }
 
-export const handleGetQuestions = async (topics: string[], diffficulty: string, count: number) => {
-  const questionStore = useQuestionStore()
-  try {
-    questionStore.setLoading(true)
-    const allTopics = topics.join(',')
-    const res = await axios.post('/test', {
-      topics: allTopics,
-      diffficulty,
-      count,
-    })
-    console.log(res.data)
-    questionStore.setQuestions(res.data)
-    return res
-  } catch (err) {
-    console.log(err)
-  } finally {
-    questionStore.setLoading(false)
-  }
-}
-
 export const handleLogout = async () => {
   const userStore = useUserStore()
   try {
-    await axios.get('/logout', {
+    const res = await axios.get('/auth/logout', {
       withCredentials: true,
     })
     userStore.setUser(null)
+    console.log(res)
   } catch (err) {
     console.log(err)
   }

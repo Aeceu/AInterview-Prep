@@ -1,12 +1,6 @@
 <template>
   <el-container style="width: 100%; height: 100vh">
-    <el-aside style="">
-      <el-header style="display: flex; align-items: center; justify-content: start">
-        <el-text @click="handleLogin" size="large" style="font-size: 24px; font-weight: bold"
-          >AInterview</el-text
-        >
-      </el-header>
-    </el-aside>
+    <SidebarView />
     <el-container style="background-color: #222222">
       <el-header style="width: 100%">
         <el-row style="width: 100%; height: 100%" align="middle" justify="end">
@@ -18,15 +12,14 @@
             round
             >Login</el-button
           >
-          <el-dropdown placement="bottom-end">
+          <el-dropdown v-else placement="bottom-end">
             <el-avatar
-              v-if="userStore.getUser"
-              :src="
-                userStore.getUser
-                  ? userStore.getUser.profileImage
-                  : 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
+              v-if="!userStore.getUser"
+              src="
+                   'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
               "
             />
+            <el-avatar v-else :src="userStore.getUser.profileImage" />
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item>Profile</el-dropdown-item>
@@ -54,16 +47,23 @@
           padding: 0;
         "
       >
-        <TopicForm v-if="questionStore.getQuestions.length <= 0" />
+        <CurrentQuizSession v-if="questionStore.getCurrentQuizSession" />
+        <TopicForm
+          v-if="questionStore.getQuestions.length <= 0 && !questionStore.getCurrentQuizSession"
+        />
         <QuestionCard
           :key="questionStore.getCurrentIndex"
           :questionnare="questionStore.getQuestions[questionStore.getCurrentIndex]"
-          v-if="questionStore.getAnswers.length < questionStore.getQuestions.length"
+          v-if="
+            questionStore.getAnswers.length < questionStore.getQuestions.length &&
+            !questionStore.getCurrentQuizSession
+          "
         />
         <AnswersForm
           v-if="
             questionStore.getAnswers.length > 0 &&
-            questionStore.getAnswers.length === questionStore.getQuestions.length
+            questionStore.getAnswers.length === questionStore.getQuestions.length &&
+            !questionStore.getCurrentQuizSession
           "
         />
       </el-main>
@@ -74,7 +74,9 @@
 <script setup lang="ts">
 import { handleLogout } from '@/api/actions/userActions'
 import AnswersForm from '@/components/AnswersForm.vue'
+import CurrentQuizSession from '@/components/CurrentQuizSession.vue'
 import QuestionCard from '@/components/QuestionCard.vue'
+import SidebarView from '@/components/SidebarView.vue'
 import TopicForm from '@/components/TopicForm.vue'
 import { useQuestionStore } from '@/stores/questionStore'
 import { useUserStore } from '@/stores/userStore'
@@ -82,7 +84,7 @@ import { useUserStore } from '@/stores/userStore'
 const questionStore = useQuestionStore()
 const userStore = useUserStore()
 const handleLogin = async () => {
-  window.location.href = 'http://localhost:4200/api/auth/google'
+  window.location.href = 'http://localhost:4200/api/v1/auth/google'
 }
 </script>
 

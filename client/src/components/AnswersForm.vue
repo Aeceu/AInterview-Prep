@@ -52,6 +52,20 @@
     </el-card>
     <el-row style="margin-top: 1em; margin-bottom: 1em" align="middle" justify="end">
       <el-button
+        v-loading="loading"
+        :disabled="loading"
+        size="large"
+        style="
+          color: rgba(255, 255, 255, 1);
+          border: 2px solid #0ed06e;
+          background-color: rgba(14, 208, 110, 0.1); /* Light green background */
+          font-weight: bold;
+          font-size: 16px;
+        "
+        @click="handleSave"
+        >Save</el-button
+      >
+      <el-button
         size="large"
         style="
           color: rgba(255, 255, 255, 1);
@@ -68,18 +82,48 @@
 </template>
 
 <script setup lang="ts">
+import { handleSaveQuestions } from '@/api/actions/questionActions'
 import { useQuestionStore } from '@/stores/questionStore'
+import { useUserStore } from '@/stores/userStore'
+import { onMounted, ref } from 'vue'
 
 const questionStore = useQuestionStore()
+const userStore = useUserStore()
+const score = ref(0)
+const loading = ref<boolean>(false)
 
 const handleReset = () => {
   questionStore.setQuestions([])
   questionStore.setAnswers([])
   questionStore.setCurrentIndex(0)
+  questionStore.setTags([])
+  questionStore.setDifficulty('')
+  questionStore.setCount(0)
 }
+
+const handleSave = async () => {
+  loading.value = true
+  if (!userStore.getUser) return
+  await handleSaveQuestions({
+    score: score.value,
+    questions: questionStore.getQuestions,
+    userId: userStore.getUser.id,
+    answers: questionStore.getAnswers,
+    tags: questionStore.getTags.join(','),
+    difficulty: questionStore.getDifficulty,
+    count: questionStore.getCount,
+  }).finally(() => {
+    loading.value = false
+  })
+}
+
+onMounted(() => {
+  score.value = questionStore.getQuestions.reduce((total, item, index) => {
+    return total + (item.correct === questionStore.getAnswers[index] ? 1 : 0)
+  }, 0)
+})
 </script>
 
-<style scoped></style>
 <style scoped>
 .choices {
   width: 100%;

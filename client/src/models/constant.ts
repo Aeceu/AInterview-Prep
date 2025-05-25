@@ -50,3 +50,18 @@ export const countOption = [
   { label: 15, value: 15 },
   { label: 20, value: 20 },
 ]
+
+export const DifficultyOptions = [
+  {
+    label: 'Easy',
+    value: 'easy',
+  },
+  {
+    label: 'Medium',
+    value: 'medium',
+  },
+  {
+    label: 'Hard',
+    value: 'hard',
+  },
+]

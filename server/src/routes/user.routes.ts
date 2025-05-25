@@ -1,9 +1,5 @@
 import express, { Request, Response } from "express";
-import {
-  handleTestAI,
-  LoginSuccess,
-  Logout,
-} from "../controllers/user.controller";
+import { LoginSuccess, Logout } from "../controllers/user.controller";
 import passport from "passport";
 
 const router = express.Router();
@@ -23,7 +19,5 @@ router.get(
   },
 );
 router.get("/logout", Logout);
-
-router.post("/test", handleTestAI);
 
 export default router;
