@@ -11,6 +11,12 @@ export const sequelize = new Sequelize(
     port: Number(process.env.DB_PORT),
     dialect: "postgres",
     logging: false,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
   },
 );
 
@@ -19,7 +25,7 @@ export const syncDataBase = async () => {
     await sequelize.authenticate();
     console.log("Connect connection has been established successfully!");
 
-    // await sequelize.sync({ alter: true });
+    await sequelize.sync({ force: true });
     console.log("Database synchronized successfully");
     console.log("Registered models:", Object.keys(sequelize.models));
   } catch (error) {
