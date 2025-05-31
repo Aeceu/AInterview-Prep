@@ -13,13 +13,7 @@
             >Login</el-button
           >
           <el-dropdown v-else placement="bottom-end">
-            <el-avatar
-              v-if="!userStore.getUser"
-              src="
-                   'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
-              "
-            />
-            <el-avatar v-else :src="userStore.getUser.profileImage" />
+            <el-avatar :src="userStore.getUser?.profileImage" />
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item>Profile</el-dropdown-item>
